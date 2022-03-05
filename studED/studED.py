@@ -10,7 +10,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('mainmenu.ui', self)
-        self.clock = 
+        # self.clock =
         self.button_connect.clicked.connect(self.do_update)
 
     def do_update(self):
