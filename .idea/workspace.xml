@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="13c0ef83-68cb-4cfb-b84c-10359e67564e" name="Changes" comment="editor progress 01">
+    <list default="true" id="13c0ef83-68cb-4cfb-b84c-10359e67564e" name="Changes" comment="making the save function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/teachED/teachED.py" beforeDir="false" afterPath="$PROJECT_DIR$/teachED/teachED.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -172,7 +171,14 @@
       <option name="project" value="LOCAL" />
       <updated>1646310779567</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="making the save function">
+      <created>1646492911768</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1646492911768</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -191,6 +197,7 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="restarting" />
     <MESSAGE value="editor progress 01" />
-    <option name="LAST_COMMIT_MESSAGE" value="editor progress 01" />
+    <MESSAGE value="making the save function" />
+    <option name="LAST_COMMIT_MESSAGE" value="making the save function" />
   </component>
 </project>

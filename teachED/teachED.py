@@ -21,26 +21,23 @@ class SettingsPage(QWidget, UiSetup):
 
 
 class SingleTestPage(QWidget, UiSetup):
-    def __init__(self, text='', answer=''):
+    def __init__(self, setup=None):
         super().__init__()
         uic.loadUi(sys.path[0] + '\\ui\\q_single.ui', self)
-        self.text = text
-        self.answer = answer
-        self.desc.setText(self.text)
-        self.answ.setText(self.answer)
+        if setup is not None:
+            self.desc.setText(setup['desc'])
+            self.answ.setText(setup['answer'])
 
     def extractcontent(self):
-        out = {'answer': self.answ.text(), 'desc': self.desc.toPlainText()}
+        out = {'type': 'single', 'answer': self.answ.text(), 'desc': self.desc.toPlainText()}
         return out
 
 
 class PickTestPage(QWidget, UiSetup):
-    def __init__(self, opts=None, picks=None):
+    def __init__(self, setup=None):
         super().__init__()
-        if picks is None:
-            picks = []
-        if opts is None:
-            opts = []
+        picks = []
+        opts = []
         uic.loadUi(sys.path[0] + '\\ui\\q_pick.ui', self)
 
         self.picks = picks
@@ -63,8 +60,17 @@ class PickTestPage(QWidget, UiSetup):
         self.opts.append(self.opt_7)
         self.opts.append(self.opt_8)
 
+        if setup is not None:
+            self.desc.setText(setup['desc'])
+            for n in setup['picked']:
+                self.picks[n].setCheckState(True)
+            for i in range(0, 8):
+                self.opts[i].setText(setup['options'][i])
+
     def extractcontent(self):
         out = {
+            'type': 'pick',
+            'desc': self.desc.toPlainText(),
             'options': [],
             'picked': []
         }
@@ -127,7 +133,20 @@ class EditorWindow(QMainWindow, UiSetup):
         print(path)
 
     def opentest(self):
-        pass
+        tempind = 0
+        path = QFileDialog.getOpenFileName(self, 'Выберите файл', '', '', )[0]
+        with open(path, 'r') as jj:
+            data = json.load(jj)
+        self.timer = data['timer']
+        self.testname = data['name']
+        self.test_name.setText(self.testname)
+        for pagedata in data['pages']:
+            tempind += 1
+            if pagedata['type'] == 'single':
+                self.questions.addWidget(SingleTestPage(pagedata))
+            else:
+                self.questions.addWidget(PickTestPage(pagedata))
+        self.refresh()
 
     def refresh(self):
         print(self.pageindex)
@@ -173,22 +192,25 @@ class EditorWindow(QMainWindow, UiSetup):
         self.refresh()
 
     def __exit__(self):
-        # TODO: допилить и привязать диалог
         dil = QMessageBox()
         dil.setWindowTitle('Выход из редактора')
         dil.setText('Сохранить внесённые изменения?')
-        dil.addButton(QMessageBox.StandardButton, QMessageBox.Discard)
-        dil.addButton('Сохранить', QMessageBox.Save)
-        dil.addButton('Отмена', QMessageBox.Cancel)
-        dil.setDefaultButton(QMessageBox.Save)
-        dil.setEscapeButton(QMessageBox.Cancel)
+        dil.setIcon(QMessageBox.Question)
+        savebtn = dil.addButton('Сохранить', QMessageBox.AcceptRole)
+        cancelbtn = dil.addButton('Отмена', QMessageBox.NoRole)
+        nosavebtn = dil.addButton('Не сохранять', QMessageBox.RejectRole)
+        dil.setEscapeButton(cancelbtn)
+        dil.show()
+        dil.exec()
         c = dil.clickedButton()
-        if c == QMessageBox.Discard:
+        if c == nosavebtn:
             mw.show()
+            dil.hide()
             self.hide()
-        elif c == QMessageBox.Save:
+        elif c == savebtn:
             self.savetest()
             mw.show()
+            dil.hide()
             self.hide()
         else:
             pass
@@ -196,13 +218,14 @@ class EditorWindow(QMainWindow, UiSetup):
     def savetest(self):
         if self.sender() == self.save_as or self.filename is None:
             filename = QFileDialog.getSaveFileName(self, 'Сохранить тест', '', '*.json')[0]
+            self.filename = filename
         else:
             filename = self.filename
-        data = {'timer': self.timer, 'name': self.testname}
+        data = {'timer': self.timer, 'name': self.testname, 'pages': []}
         for i in range(1, self.questions.count()):
             self.questions.setCurrentIndex(i)
             w = self.questions.currentWidget()
-            data[str(i)] = w.extractcontent()
+            data['pages'].append(w.extractcontent())
         if filename != '':
             with open(filename, 'w') as f:
                 json.dump(data, f)
@@ -210,6 +233,7 @@ class EditorWindow(QMainWindow, UiSetup):
         else:
             error = QErrorMessage()
             error.showMessage('Пустое название файла!')
+        self.refresh()
 
 
 if __name__ == '__main__':
