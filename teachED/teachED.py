@@ -133,6 +133,7 @@ class EditorWindow(QMainWindow, UiSetup):
         print(path)
 
     def opentest(self):
+        # TODO: стирать предыдущий тест перед загрузкой нового
         tempind = 0
         path = QFileDialog.getOpenFileName(self, 'Выберите файл', '', '', )[0]
         with open(path, 'r') as jj:
