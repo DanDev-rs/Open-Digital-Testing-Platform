@@ -6,46 +6,157 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>890</width>
+    <height>639</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>OTS</string>
+   <string>ОСЦТ - Учительская версия</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_3">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>5</number>
+      </property>
+      <property name="bottomMargin">
+       <number>5</number>
+      </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QComboBox" name="comboBox"/>
-        </item>
-        <item>
-         <widget class="QToolButton" name="toolButton">
-          <property name="text">
-           <string>...</string>
+         <widget class="QLineEdit" name="view_name">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>32</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="maxLength">
+           <number>400</number>
+          </property>
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+          <property name="dragEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="cursorMoveStyle">
+           <enum>Qt::VisualMoveStyle</enum>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+         <widget class="QToolButton" name="toolButton_2">
+          <property name="text">
+           <string/>
           </property>
-          <property name="sizeHint" stdset="0">
+          <property name="icon">
+           <iconset resource="../data/images.qrc">
+            <normaloff>:/logos/bin-black-full-icon.png</normaloff>:/logos/bin-black-full-icon.png</iconset>
+          </property>
+          <property name="iconSize">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>32</width>
+            <height>32</height>
            </size>
           </property>
-         </spacer>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="toolButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../data/images.qrc">
+            <normaloff>:/logos/refresh-icon.png</normaloff>
+            <normalon>../data/refresh-icon.png</normalon>:/logos/refresh-icon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="v_left">
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+          <property name="arrowType">
+           <enum>Qt::LeftArrow</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="v_right">
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::DelayedPopup</enum>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonIconOnly</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+          <property name="arrowType">
+           <enum>Qt::RightArrow</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
       <item>
-       <widget class="QTableWidget" name="tableWidget"/>
+       <widget class="QTableWidget" name="view_table"/>
       </item>
      </layout>
     </item>
@@ -56,7 +167,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>890</width>
      <height>21</height>
     </rect>
    </property>
@@ -64,13 +175,14 @@
     <property name="title">
      <string>Опции</string>
     </property>
-    <addaction name="to_editor"/>
-    <addaction name="action"/>
+    <addaction name="a_toeditor"/>
+    <addaction name="a_exit"/>
+    <addaction name="a_autoref"/>
    </widget>
    <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="dockWidget_2">
+  <widget class="QDockWidget" name="con_widget_dock">
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
@@ -83,10 +195,10 @@
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2">
+   <widget class="QWidget" name="con_widget">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QListWidget" name="listWidget"/>
+      <widget class="QListWidget" name="con_view"/>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
@@ -109,17 +221,168 @@
     </layout>
    </widget>
   </widget>
-  <action name="action">
+  <widget class="QDockWidget" name="filter_widget">
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Фильтры</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout_5">
+     <item>
+      <widget class="QFrame" name="frame">
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QCheckBox" name="comp_check">
+          <property name="text">
+           <string>Процент прохождения</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QComboBox" name="comp_type">
+            <item>
+             <property name="text">
+              <string>≤</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>≥</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="comp_spin"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="frame_2">
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QCheckBox" name="date_check">
+          <property name="text">
+           <string>Дата прохождения</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDateEdit" name="date_edit">
+          <property name="dateTime">
+           <datetime>
+            <hour>0</hour>
+            <minute>0</minute>
+            <second>0</second>
+            <year>2010</year>
+            <month>1</month>
+            <day>1</day>
+           </datetime>
+          </property>
+          <property name="minimumDateTime">
+           <datetime>
+            <hour>0</hour>
+            <minute>0</minute>
+            <second>0</second>
+            <year>2010</year>
+            <month>1</month>
+            <day>1</day>
+           </datetime>
+          </property>
+          <property name="calendarPopup">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>Сбросить</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="text">
+          <string>Применить</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="a_exit">
    <property name="text">
     <string>Выйти из программы</string>
    </property>
   </action>
-  <action name="to_editor">
+  <action name="a_toeditor">
    <property name="text">
     <string>Перейти в редактор</string>
    </property>
   </action>
+  <action name="a_autoref">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Автообновление</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../data/images.qrc"/>
+ </resources>
  <connections/>
 </ui>

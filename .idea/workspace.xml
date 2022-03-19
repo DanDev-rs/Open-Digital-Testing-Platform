@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="13c0ef83-68cb-4cfb-b84c-10359e67564e" name="Changes" comment="open file function done + proper saving">
-      <change beforePath="$PROJECT_DIR$/.idea/OSET.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/OSET.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="13c0ef83-68cb-4cfb-b84c-10359e67564e" name="Changes" comment="commiting the alpha build">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/teachED/data/images.qrc" beforeDir="false" afterPath="$PROJECT_DIR$/teachED/data/images.qrc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/teachED/teachED.py" beforeDir="false" afterPath="$PROJECT_DIR$/teachED/teachED.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/teachED/template.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/teachED/ui/mainwindow.ui" beforeDir="false" afterPath="$PROJECT_DIR$/teachED/ui/mainwindow.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/teachED/Оп.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,7 +35,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.project" />
   </component>
   <component name="RunManager" selected="Python.teachED">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -189,7 +190,14 @@
       <option name="project" value="LOCAL" />
       <updated>1646819061455</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="commiting the alpha build">
+      <created>1647183986513</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1647183986513</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -210,6 +218,7 @@
     <MESSAGE value="editor progress 01" />
     <MESSAGE value="making the save function" />
     <MESSAGE value="open file function done + proper saving" />
-    <option name="LAST_COMMIT_MESSAGE" value="open file function done + proper saving" />
+    <MESSAGE value="commiting the alpha build" />
+    <option name="LAST_COMMIT_MESSAGE" value="commiting the alpha build" />
   </component>
 </project>

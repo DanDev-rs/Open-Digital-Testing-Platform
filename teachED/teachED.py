@@ -1,8 +1,8 @@
 # import socket
 # import schedule
 import json
-# import sqlite3
-# import socket
+import sqlite3
+
 import sys
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog, QErrorMessage, QMessageBox
@@ -89,21 +89,61 @@ class PickTestPage(QWidget, UiSetup):
 class MainWindow(QMainWindow, UiSetup):
     def __init__(self):
         super().__init__()
+        global tables
         uic.loadUi(sys.path[0] + '\\ui\\mainwindow.ui', self)
+        self.bd = sqlite3.connect('results.db')
+        for name in self.bd.cursor().execute("""SELECT name FROM sqlite_master WHERE type='table';""").fetchall():
+            tables.append(name[0])
+        self.view_table.setHorizontalHeaderLabels(['Номер', 'Имя', 'Дата и время', 'Результат в %'])
+        if len(tables) == 1:
+            self.viewindex = 0
+        else:
+            self.viewindex = 1
+            self.refresh()
+        self.view_name.setText(tables[self.viewindex])
+        self.a_exit.triggered.connect(self.exit())
         self.to_editor.triggered.connect(self.loadeditor)
-        self.refresh()
 
     def refresh(self):
-        pass
+        # TODO: доделать фильтры
+        global tables
+
+        if self.comp_check.isChecked():
+            pass
+        self.view_name.setText(tables[self.viewindex])
+        bd = sqlite3.connect('results.db')
+        cur = bd.cursor()
+        items = cur.execute("""SELECT * FROM {}""".format(tables[self.viewindex])).fetchall()
+        print(items)
+        passed = list()
 
     def loadmainwindow(self):
         self.loadeditorwindow(0)
+
+    def changetable(self):
+        sender = self.sender()
+        global tables
+        if sender == self.v_right:
+            if self.viewindex + 1 <= len(tables) - 1:
+                self.viewindex += 1
+        else:
+            if self.viewindex > 0:
+                self.viewindex -= 1
+        self.refresh()
+
+    def deletetable(self):
+        pass
 
     def loadeditor(self):
         ed.show()
         self.hide()
 
+    def exit(self):
+        sys.exit()
 
+
+# TODO при открытии теста некоторые галочки меняются на tristate
+#
 class EditorWindow(QMainWindow, UiSetup):
     def __init__(self):
         super().__init__()
@@ -133,24 +173,32 @@ class EditorWindow(QMainWindow, UiSetup):
         print(path)
 
     def opentest(self):
-        # TODO: стирать предыдущий тест перед загрузкой нового
+        tempind = self.questions.count() - 1
+        while self.questions.count() > 1:
+            self.questions.setCurrentIndex(tempind)
+            wd = self.questions.currentWidget()
+            self.questions.removeWidget(wd)
+            tempind -= 1
         tempind = 0
         path = QFileDialog.getOpenFileName(self, 'Выберите файл', '', '', )[0]
         with open(path, 'r') as jj:
             data = json.load(jj)
         self.timer = data['timer']
         self.testname = data['name']
-        self.test_name.setText(self.testname)
+        self.filename = data['filename']
         for pagedata in data['pages']:
             tempind += 1
             if pagedata['type'] == 'single':
                 self.questions.addWidget(SingleTestPage(pagedata))
             else:
                 self.questions.addWidget(PickTestPage(pagedata))
+        self.pageindex = 0
         self.refresh()
 
     def refresh(self):
         print(self.pageindex)
+        self.questions.setCurrentIndex(self.pageindex)
+        self.test_name.setText(self.testname)
         if self.pageindex == 0:
             self.delete_page.setDisabled(True)
             self.prev_page.setDisabled(True)
@@ -170,7 +218,6 @@ class EditorWindow(QMainWindow, UiSetup):
             self.questions.addWidget(SingleTestPage())
         else:
             self.questions.addWidget(PickTestPage())
-        self.questions.setCurrentIndex(self.pageindex)
         self.refresh()
 
     def changepage(self):
@@ -181,7 +228,6 @@ class EditorWindow(QMainWindow, UiSetup):
         else:
             if self.pageindex > 0:
                 self.pageindex -= 1
-        self.questions.setCurrentIndex(self.pageindex)
         self.refresh()
 
     def deletepage(self):
@@ -217,12 +263,17 @@ class EditorWindow(QMainWindow, UiSetup):
             pass
 
     def savetest(self):
+        global tables
         if self.sender() == self.save_as or self.filename is None:
             filename = QFileDialog.getSaveFileName(self, 'Сохранить тест', '', '*.json')[0]
             self.filename = filename
         else:
             filename = self.filename
-        data = {'timer': self.timer, 'name': self.testname, 'pages': []}
+
+        self.questions.setCurrentIndex(0)
+        timelim = self.questions.currentWidget().time_limit.time()
+        self.questions.setCurrentIndex(self.pageindex)
+        data = {'timer': timelim, 'name': self.testname, 'filename': self.filename, 'pages': []}
         for i in range(1, self.questions.count()):
             self.questions.setCurrentIndex(i)
             w = self.questions.currentWidget()
@@ -234,10 +285,21 @@ class EditorWindow(QMainWindow, UiSetup):
         else:
             error = QErrorMessage()
             error.showMessage('Пустое название файла!')
+
+        if self.testname not in tables:
+            bd = sqlite3.connect('results.db')
+            cr = bd.cursor()
+            # TODO починить создание таблиц
+            cr.execute('''CREATE TABLE {}
+               (id INT PRIMARY KEY UNIQUE,
+                name TEXT,
+                date DATETIME,
+                completion INT)'''.format(self.filename))
         self.refresh()
 
 
 if __name__ == '__main__':
+    tables = []
     app = QApplication(sys.argv)
     mw = MainWindow()
     ed = EditorWindow()

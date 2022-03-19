@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/logos">
+    <file>bin-black-full-icon.png</file>
+    <file>refresh-icon.png</file>
     <file>create_pickone.png</file>
     <file>create_pickmulti.png</file>
     <file>create_single.png</file>
