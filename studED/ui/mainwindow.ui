@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>ОСЦТ - Ученическая версия</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Triangular</enum>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QStackedWidget" name="questions">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>140</y>
+      <width>341</width>
+      <height>281</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="lineWidth">
+     <number>4</number>
+    </property>
+    <property name="midLineWidth">
+     <number>2</number>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="page">
+     <layout class="QGridLayout" name="gridLayout"/>
+    </widget>
+   </widget>
+   <widget class="QProgressBar" name="t_progress">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>100</y>
+      <width>108</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>24</number>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>480</y>
+      <width>158</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="prev_page">
+       <property name="text">
+        <string>&lt;&lt;&lt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="next_page">
+       <property name="text">
+        <string>&gt;&gt;&gt;</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="editor_menu">
+    <property name="title">
+     <string>Опции</string>
+    </property>
+    <addaction name="new_test"/>
+    <addaction name="open_test"/>
+    <addaction name="save"/>
+    <addaction name="save_as"/>
+    <addaction name="separator"/>
+    <addaction name="exit_editor"/>
+   </widget>
+   <addaction name="editor_menu"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="create_single">
+   <property name="text">
+    <string>С одним ответом</string>
+   </property>
+  </action>
+  <action name="create_pick">
+   <property name="text">
+    <string>С выбором из нескольких ответов</string>
+   </property>
+  </action>
+  <action name="create_pickmulti">
+   <property name="icon">
+    <iconset>
+     <normalon>:/logos/create_pickmulti.png</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>С выбором нескольких ответов</string>
+   </property>
+  </action>
+  <action name="save">
+   <property name="text">
+    <string>Сохранить</string>
+   </property>
+  </action>
+  <action name="save_as">
+   <property name="text">
+    <string>Сохранить как</string>
+   </property>
+  </action>
+  <action name="exit_editor">
+   <property name="text">
+    <string>Выйти из редактора</string>
+   </property>
+  </action>
+  <action name="testoptions">
+   <property name="text">
+    <string>Параметры теста</string>
+   </property>
+  </action>
+  <action name="open_test">
+   <property name="text">
+    <string>Открыть тест</string>
+   </property>
+  </action>
+  <action name="new_test">
+   <property name="text">
+    <string>Новый тест</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../../teachED/data/images.qrc"/>
+ </resources>
+ <connections/>
+</ui>

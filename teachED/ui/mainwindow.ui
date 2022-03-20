@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>890</width>
-    <height>639</height>
+    <width>1012</width>
+    <height>623</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>932</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>ОСЦТ - Учительская версия</string>
@@ -45,6 +51,11 @@
             <height>32</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
           <property name="maxLength">
            <number>400</number>
           </property>
@@ -66,13 +77,13 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="toolButton_2">
+         <widget class="QToolButton" name="t_delete">
           <property name="text">
            <string/>
           </property>
           <property name="icon">
            <iconset resource="../data/images.qrc">
-            <normaloff>:/logos/bin-black-full-icon.png</normaloff>:/logos/bin-black-full-icon.png</iconset>
+            <normaloff>:/logos/icons8-delete-30.png</normaloff>:/logos/icons8-delete-30.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -86,7 +97,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="toolButton">
+         <widget class="QToolButton" name="t_refresh">
           <property name="text">
            <string/>
           </property>
@@ -97,8 +108,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>30</width>
+            <height>30</height>
            </size>
           </property>
           <property name="autoRaise">
@@ -156,7 +167,69 @@
        </layout>
       </item>
       <item>
-       <widget class="QTableWidget" name="view_table"/>
+       <widget class="QTableWidget" name="view_table">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="dragDropOverwriteMode">
+         <bool>false</bool>
+        </property>
+        <property name="showGrid">
+         <bool>true</bool>
+        </property>
+        <property name="sortingEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="columnCount">
+         <number>4</number>
+        </property>
+        <attribute name="horizontalHeaderVisible">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="horizontalHeaderCascadingSectionResizes">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>140</number>
+        </attribute>
+        <attribute name="horizontalHeaderMinimumSectionSize">
+         <number>45</number>
+        </attribute>
+        <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>Номер</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Имя участника</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Дата участия</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Процент завершения</string>
+         </property>
+        </column>
+       </widget>
       </item>
      </layout>
     </item>
@@ -167,7 +240,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>890</width>
+     <width>1012</width>
      <height>21</height>
     </rect>
    </property>
@@ -176,8 +249,8 @@
      <string>Опции</string>
     </property>
     <addaction name="a_toeditor"/>
+    <addaction name="separator"/>
     <addaction name="a_exit"/>
-    <addaction name="a_autoref"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -187,7 +260,7 @@
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="allowedAreas">
-    <set>Qt::RightDockWidgetArea</set>
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
     <string>Подключенные ученики</string>
@@ -222,8 +295,14 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="filter_widget">
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetMovable</set>
+   </property>
    <property name="allowedAreas">
-    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+    <set>Qt::BottomDockWidgetArea|Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
     <string>Фильтры</string>
@@ -339,22 +418,11 @@
       </spacer>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
-       <item>
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>Сбросить</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_2">
-         <property name="text">
-          <string>Применить</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QPushButton" name="f_enable">
+       <property name="text">
+        <string>Применить</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -374,7 +442,7 @@
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Автообновление</string>

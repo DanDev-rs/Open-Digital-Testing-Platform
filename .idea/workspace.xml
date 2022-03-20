@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="13c0ef83-68cb-4cfb-b84c-10359e67564e" name="Changes" comment="commiting the alpha build">
+    <list default="true" id="13c0ef83-68cb-4cfb-b84c-10359e67564e" name="Changes" comment="making the main window">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studED/studED.py" beforeDir="false" afterPath="$PROJECT_DIR$/studED/studED.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/teachED/data/images.qrc" beforeDir="false" afterPath="$PROJECT_DIR$/teachED/data/images.qrc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/teachED/teachED.py" beforeDir="false" afterPath="$PROJECT_DIR$/teachED/teachED.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/teachED/template.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/teachED/ui/editor.ui" beforeDir="false" afterPath="$PROJECT_DIR$/teachED/ui/editor.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/teachED/ui/mainwindow.ui" beforeDir="false" afterPath="$PROJECT_DIR$/teachED/ui/mainwindow.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/teachED/Оп.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,6 +22,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="24u6n3AiMMOsPD7PiRYyDqEfBs3" />
@@ -197,7 +202,14 @@
       <option name="project" value="LOCAL" />
       <updated>1647183986513</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="making the main window">
+      <created>1647687721708</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1647687721708</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -205,7 +217,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="dev" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -219,6 +243,7 @@
     <MESSAGE value="making the save function" />
     <MESSAGE value="open file function done + proper saving" />
     <MESSAGE value="commiting the alpha build" />
-    <option name="LAST_COMMIT_MESSAGE" value="commiting the alpha build" />
+    <MESSAGE value="making the main window" />
+    <option name="LAST_COMMIT_MESSAGE" value="making the main window" />
   </component>
 </project>

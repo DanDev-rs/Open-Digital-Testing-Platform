@@ -1,23 +1,22 @@
 # import socket
-# import schedule
+import schedule
+import time
 import json
 import sqlite3
 
 import sys
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog, QErrorMessage, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog, QErrorMessage, QMessageBox, \
+    QTableWidgetItem
+
+
+class NoFileName(Exception):
+    pass
 
 
 class UiSetup(object):
     def setupmainui(self, window):
         pass
-
-
-class SettingsPage(QWidget, UiSetup):
-    def __init__(self):
-        super().__init__()
-        uic.loadUi(sys.path[0] + '\\ui\\q_init.ui', self)
-        self.timer = 0
 
 
 class SingleTestPage(QWidget, UiSetup):
@@ -85,6 +84,12 @@ class PickTestPage(QWidget, UiSetup):
                 out['options'].append(None)
         return out
 
+# TODO: сделать подтверждение удаления
+# TODO: ученическая версия
+# TODO при открытии теста некоторые галочки меняются на tristate?
+# TODO: автообновление (опционально)
+# TODO: оценка результатов теста
+
 
 class MainWindow(QMainWindow, UiSetup):
     def __init__(self):
@@ -94,28 +99,78 @@ class MainWindow(QMainWindow, UiSetup):
         self.bd = sqlite3.connect('results.db')
         for name in self.bd.cursor().execute("""SELECT name FROM sqlite_master WHERE type='table';""").fetchall():
             tables.append(name[0])
+        print(tables)
         self.view_table.setHorizontalHeaderLabels(['Номер', 'Имя', 'Дата и время', 'Результат в %'])
-        if len(tables) == 1:
-            self.viewindex = 0
-        else:
-            self.viewindex = 1
-            self.refresh()
+        self.viewindex = 0
+        schedule.every(30).seconds.do(self.refresh)
+
         self.view_name.setText(tables[self.viewindex])
-        self.a_exit.triggered.connect(self.exit())
-        self.to_editor.triggered.connect(self.loadeditor)
+        self.a_exit.triggered.connect(self.exit)
+        self.a_toeditor.triggered.connect(self.loadeditor)
+        self.f_enable.clicked.connect(self.refresh)
+        self.v_right.clicked.connect(self.changetable)
+        self.v_left.clicked.connect(self.changetable)
+        self.t_refresh.clicked.connect(self.refresh)
+        self.refresh()
 
     def refresh(self):
-        # TODO: доделать фильтры
         global tables
 
         if self.comp_check.isChecked():
-            pass
-        self.view_name.setText(tables[self.viewindex])
-        bd = sqlite3.connect('results.db')
-        cur = bd.cursor()
-        items = cur.execute("""SELECT * FROM {}""".format(tables[self.viewindex])).fetchall()
-        print(items)
-        passed = list()
+            if self.comp_type.currentIndex() == 0:
+                cmp = 0
+            else:
+                cmp = 1
+            completion = self.comp_spin.value()
+        else:
+            completion = None
+        if self.date_check.isChecked():
+            dt = self.date_edit.date()
+            date = str(dt.day()) + '.' + str(dt.month()) + '.' + str(dt.year())
+        else:
+            date = None
+
+        if tables:
+            self.view_name.setText(tables[self.viewindex])
+            self.view_table.clear()
+            self.view_table.setRowCount(0)
+
+            bd = sqlite3.connect('results.db')
+            cur = bd.cursor()
+            print(tables[self.viewindex])
+            items = cur.execute('''SELECT * FROM {}'''.format(tables[self.viewindex])).fetchall()
+            passed = list()
+            for elem in items:
+                e_cmp = elem[3]
+                e_date = elem[2].split()[0]
+                if completion is not None:
+                    if date is not None:
+                        if cmp == 0:
+                            if e_cmp <= completion and e_date == date:
+                                passed.append(elem)
+                        else:
+                            if e_cmp >= completion and e_date == date:
+                                passed.append(elem)
+                    else:
+                        if cmp == 0:
+                            if e_cmp <= completion:
+                                passed.append(elem)
+                        else:
+                            if e_cmp >= completion:
+                                passed.append(elem)
+                elif date is not None:
+                    if e_date == date:
+                        passed.append(elem)
+                else:
+                    passed = items
+
+            self.view_table.setRowCount(len(passed))
+            if passed:
+                for i, f in enumerate(passed):
+                    for j, val in enumerate(f):
+                        self.view_table.setItem(i, j, QTableWidgetItem(str(val)))
+        print(schedule.get_jobs())
+        print('refreshed')
 
     def loadmainwindow(self):
         self.loadeditorwindow(0)
@@ -123,6 +178,7 @@ class MainWindow(QMainWindow, UiSetup):
     def changetable(self):
         sender = self.sender()
         global tables
+        print(self.viewindex, len(tables))
         if sender == self.v_right:
             if self.viewindex + 1 <= len(tables) - 1:
                 self.viewindex += 1
@@ -138,12 +194,11 @@ class MainWindow(QMainWindow, UiSetup):
         ed.show()
         self.hide()
 
-    def exit(self):
+    @staticmethod
+    def exit():
         sys.exit()
 
 
-# TODO при открытии теста некоторые галочки меняются на tristate
-#
 class EditorWindow(QMainWindow, UiSetup):
     def __init__(self):
         super().__init__()
@@ -163,8 +218,7 @@ class EditorWindow(QMainWindow, UiSetup):
         self.next_page.clicked.connect(self.changepage)
         self.prev_page.clicked.connect(self.changepage)
         self.delete_page.clicked.connect(self.deletepage)
-
-        self.test_name.setText(self.testname)
+        self.test_name.editingFinished.connect(self.refresh)
 
         self.refresh()
 
@@ -192,11 +246,13 @@ class EditorWindow(QMainWindow, UiSetup):
                 self.questions.addWidget(SingleTestPage(pagedata))
             else:
                 self.questions.addWidget(PickTestPage(pagedata))
+        self.test_name.setText(self.testname)
         self.pageindex = 0
         self.refresh()
 
     def refresh(self):
         print(self.pageindex)
+        self.testname = self.test_name.text()
         self.questions.setCurrentIndex(self.pageindex)
         self.test_name.setText(self.testname)
         if self.pageindex == 0:
@@ -264,42 +320,43 @@ class EditorWindow(QMainWindow, UiSetup):
 
     def savetest(self):
         global tables
-        if self.sender() == self.save_as or self.filename is None:
-            filename = QFileDialog.getSaveFileName(self, 'Сохранить тест', '', '*.json')[0]
-            self.filename = filename
-        else:
-            filename = self.filename
+        directory = QFileDialog.getExistingDirectory()
 
-        self.questions.setCurrentIndex(0)
-        timelim = self.questions.currentWidget().time_limit.time()
-        self.questions.setCurrentIndex(self.pageindex)
-        data = {'timer': timelim, 'name': self.testname, 'filename': self.filename, 'pages': []}
+        tl = self.time_limit.time()
+        timelim = tl.hour() * 3600 + tl.minute() * 60 + tl.second()
+        print(timelim)
+        data = {'timer': timelim, 'name': self.testname, 'pages': []}
         for i in range(1, self.questions.count()):
             self.questions.setCurrentIndex(i)
             w = self.questions.currentWidget()
             data['pages'].append(w.extractcontent())
-        if filename != '':
+        out_name = '_'.join(g for g in self.testname.split())
+        filename = directory + '\\' + out_name + '.json'
+        try:
+            if directory == '':
+                raise NoFileName
             with open(filename, 'w') as f:
                 json.dump(data, f)
             print(data)
-        else:
-            error = QErrorMessage()
-            error.showMessage('Пустое название файла!')
-
-        if self.testname not in tables:
-            bd = sqlite3.connect('results.db')
-            cr = bd.cursor()
-            # TODO починить создание таблиц
-            cr.execute('''CREATE TABLE {}
-               (id INT PRIMARY KEY UNIQUE,
-                name TEXT,
-                date DATETIME,
-                completion INT)'''.format(self.filename))
-        self.refresh()
+            if self.testname not in tables:
+                bd = sqlite3.connect('results.db')
+                bd.cursor().execute('''CREATE TABLE {}
+                   (id INT PRIMARY KEY UNIQUE,
+                    name TEXT,
+                    date DATETIME,
+                    completion INT)'''.format(out_name))
+                tables.append(out_name)
+        except NoFileName:
+            pass
+        except sqlite3.OperationalError:
+            error = QErrorMessage().qtHandler()
+            error.showMessage('Нет имени теста!', 'qWarning')
+        finally:
+            self.refresh()
 
 
 if __name__ == '__main__':
-    tables = []
+    tables = list()
     app = QApplication(sys.argv)
     mw = MainWindow()
     ed = EditorWindow()
