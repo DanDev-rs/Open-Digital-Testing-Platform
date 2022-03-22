@@ -1,12 +1,34 @@
-import sqlite3
 import sys
+import threading
+import time
+import datetime
 import socket
+import json
 
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox, QFileDialog, QErrorMessage
 # TODO: интерфейс
 # TODO: связь с компьютером учителя через сокет
 # TODO: отправка результата и получение тестов по сети
+# TODO: рабочий таймер через threading
+
+
+def decode(word, codekey):
+    letters = list(word.strip())
+    opers = list()
+    out = list()
+    for n in range(0, 11, 2):
+        opers.append((int(codekey[n]), int(codekey[n + 1])))
+    for lt in letters:
+        ind = ord(lt)
+        for oper in opers:
+            op, num = oper
+            if op in {1, 3, 4, 6}:
+                ind -= num
+            elif op in {2, 5, 7, 8}:
+                ind += num
+        out.append(ind)
+    return ''.join(chr(g) for g in out)
 
 
 class UiSetup(object):
@@ -14,69 +36,54 @@ class UiSetup(object):
         pass
 
 
+class EndPage(QWidget, UiSetup):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi(sys.path[0] + '\\ui\\endpage.ui', self)
+
+
 class SingleTestPage(QWidget, UiSetup):
-    def __init__(self, setup=None):
+    def __init__(self, setup):
         super().__init__()
         uic.loadUi(sys.path[0] + '\\ui\\q_single.ui', self)
-        if setup is not None:
-            self.desc.setText(setup['desc'])
-            self.answ.setText(setup['answer'])
+        self.desc.setText(setup['desc'])
 
-    def extractcontent(self):
-        out = {'type': 'single', 'answer': self.answ.text(), 'desc': self.desc.toPlainText()}
-        return out
+    def returnanswer(self):
+        return self.answ.text()
 
 
 class PickTestPage(QWidget, UiSetup):
-    def __init__(self, setup=None):
+    def __init__(self, setup):
         super().__init__()
         picks = []
-        opts = []
         uic.loadUi(sys.path[0] + '\\ui\\q_pick.ui', self)
 
         self.picks = picks
-        self.opts = opts
-        self.picks.append(self.pick_1)
-        self.picks.append(self.pick_2)
-        self.picks.append(self.pick_3)
-        self.picks.append(self.pick_4)
-        self.picks.append(self.pick_5)
-        self.picks.append(self.pick_6)
-        self.picks.append(self.pick_7)
-        self.picks.append(self.pick_8)
+        self.picks.append(self.pick1)
+        self.picks.append(self.pick2)
+        self.picks.append(self.pick3)
+        self.picks.append(self.pick4)
+        self.picks.append(self.pick5)
+        self.picks.append(self.pick6)
+        self.picks.append(self.pick7)
+        self.picks.append(self.pick8)
 
-        self.opts.append(self.opt_1)
-        self.opts.append(self.opt_2)
-        self.opts.append(self.opt_3)
-        self.opts.append(self.opt_4)
-        self.opts.append(self.opt_5)
-        self.opts.append(self.opt_6)
-        self.opts.append(self.opt_7)
-        self.opts.append(self.opt_8)
+        self.desc.setText(setup['desc'])
+        for n in range(0, 8):
+            p = self.picks[n]
+            if setup['options'][n] is None:
+                p.hide()
+            else:
+                p.setText(setup['options'][n])
 
-        if setup is not None:
-            self.desc.setText(setup['desc'])
-            for n in setup['picked']:
-                self.picks[n].setCheckState(True)
-            for i in range(0, 8):
-                self.opts[i].setText(setup['options'][i])
-
-    def extractcontent(self):
-        out = {
-            'type': 'pick',
-            'desc': self.desc.toPlainText(),
-            'options': [],
-            'picked': []
-        }
+    def returnanswer(self):
+        out = ''
         for i in range(0, 8):
             p = self.picks[i]
-            o = self.opts[i]
             if p.isChecked():
-                out['picked'].append(i)
-            if o.text() != '':
-                out['options'].append(o.text())
+                out += '1'
             else:
-                out['options'].append(None)
+                out += '0'
         return out
 
 
@@ -84,159 +91,137 @@ class MainWindow(QMainWindow, UiSetup):
     def __init__(self):
         super().__init__()
         uic.loadUi(sys.path[0] + '\\ui\\mainwindow.ui', self)
-        self.pageindex = 0
-        self.timer = 0
-        self.filename = None
 
-        self.exit_editor.triggered.connect(self.__exit__)
-        self.create_single.triggered.connect(self.createpage)
-        self.create_pick.triggered.connect(self.createpage)
-        self.new_test.triggered.connect(self.newtest)
-        self.open_test.triggered.connect(self.opentest)
-        self.save.triggered.connect(self.savetest)
-        self.save_as.triggered.connect(self.savetest)
-        self.next_page.clicked.connect(self.changepage)
-        self.prev_page.clicked.connect(self.changepage)
-        self.delete_page.clicked.connect(self.deletepage)
-
-        self.test_name.setText(self.testname)
-
-        self.refresh()
-
-    def newtest(self):
-        path = QFileDialog.getExistingDirectory(self, 'Новый тест', '')
-        print(path)
-
-    def opentest(self):
         tempind = self.questions.count() - 1
         while self.questions.count() > 1:
             self.questions.setCurrentIndex(tempind)
             wd = self.questions.currentWidget()
             self.questions.removeWidget(wd)
             tempind -= 1
-        tempind = 0
-        path = QFileDialog.getOpenFileName(self, 'Выберите файл', '', '', )[0]
-        with open(path, 'r') as jj:
-            data = json.load(jj)
-        self.timer = data['timer']
-        self.testname = data['name']
-        self.filename = data['filename']
-        for pagedata in data['pages']:
-            tempind += 1
-            if pagedata['type'] == 'single':
-                self.questions.addWidget(SingleTestPage(pagedata))
-            else:
-                self.questions.addWidget(PickTestPage(pagedata))
+
         self.pageindex = 0
-        self.refresh()
+        self.timer = 0
+        self.filename = None
+        self.testname = None
+        self.testactive = False
+        self.codekey = None
+        self.data = None
+        self.toolbar_widget.hide()
+
+        self.start_btn.clicked.connect(self.begintest)
+        self.loadlocal_btn.clicked.connect(self.opentest)
+        self.t_finish.clicked.connect(self.finishtest)
+        self.t_next.clicked.connect(self.changepage)
+        self.t_prev.clicked.connect(self.changepage)
+        self.a_exit.triggered.connect(self.__exit__)
+        self.test_name.clear()
+        self.start_btn.setDisabled(True)
+        self.request_btn.setDisabled(True)
+        self.t_next.setDisabled(True)
+        self.t_prev.setDisabled(True)
+        self.t_finish.setDisabled(True)
+
+    def opentest(self):
+        tempind = 1
+        path = QFileDialog.getOpenFileName(self, 'Выберите файл', '', '')[0]
+        if path != '':
+            with open(path, 'r') as jj:
+                data = json.load(jj)
+            self.data = data
+            self.timer = data['timer']
+            self.testname = data['name']
+            self.codekey = data['codekey']
+            self.test_name.setText(self.testname)
+            for pagedata in data['pages']:
+                tempind += 1
+                if pagedata['type'] == 'single':
+                    self.questions.addWidget(SingleTestPage(pagedata))
+                else:
+                    self.questions.addWidget(PickTestPage(pagedata))
+            self.start_btn.setDisabled(False)
+            self.pageindex = 0
 
     def refresh(self):
         print(self.pageindex)
         self.questions.setCurrentIndex(self.pageindex)
-        self.test_name.setText(self.testname)
-        if self.pageindex == 0:
-            self.delete_page.setDisabled(True)
-            self.prev_page.setDisabled(True)
+        if self.pageindex == 1:
+            self.t_prev.setDisabled(True)
         else:
-            self.prev_page.setDisabled(False)
-            self.delete_page.setDisabled(False)
+            self.t_prev.setDisabled(False)
         if self.pageindex + 1 > self.questions.count() - 1:
-            self.next_page.setDisabled(True)
+            self.t_next.setDisabled(True)
         else:
-            self.next_page.setDisabled(False)
-
-    def createpage(self):
-        sender = self.sender()
-        self.delete_page.setDisabled(False)
-        self.pageindex += 1
-        if sender == self.create_single:
-            self.questions.addWidget(SingleTestPage())
-        else:
-            self.questions.addWidget(PickTestPage())
-        self.refresh()
+            self.t_next.setDisabled(False)
+        self.t_counter.setText('Вопрос ' + str(self.pageindex) + ' из ' + str(self.questions.count() - 1))
 
     def changepage(self):
         sender = self.sender()
-        if sender == self.next_page:
+        if sender == self.t_next:
             if self.pageindex + 1 <= self.questions.count() - 1:
                 self.pageindex += 1
         else:
-            if self.pageindex > 0:
+            if self.pageindex > 1:
                 self.pageindex -= 1
         self.refresh()
 
-    def deletepage(self):
-        if self.questions.count() > 1:
-            self.questions.removeWidget(self.questions.currentWidget())
-            self.pageindex -= 1
+    def __exit__(self):
+        if self.testactive:
+            dil = QMessageBox()
+            dil.setWindowTitle('Выход из тестировщика')
+            dil.setText('Вы уверены? Весь ваш прогресс будет утерян!')
+            dil.setIcon(QMessageBox.Question)
+            exitbtn = dil.addButton('Выход', QMessageBox.AcceptRole)
+            cancelbtn = dil.addButton('Отмена', QMessageBox.RejectRole)
+            dil.setEscapeButton(cancelbtn)
+            dil.show()
+            dil.exec()
+            c = dil.clickedButton()
+            if c == exitbtn:
+                sys.exit()
+            elif c == cancelbtn:
+                pass
         else:
-            self.delete_page.setDisabled(True)
+            sys.exit()
+
+    def begintest(self):
+        self.t_next.setDisabled(False)
+        self.t_prev.setDisabled(False)
+        self.t_finish.setDisabled(False)
+        self.toolbar_widget.show()
+        self.pageindex = 1
+        self.testactive = True
         self.refresh()
 
-    def __exit__(self):
-        dil = QMessageBox()
-        dil.setWindowTitle('Выход из редактора')
-        dil.setText('Сохранить внесённые изменения?')
-        dil.setIcon(QMessageBox.Question)
-        savebtn = dil.addButton('Сохранить', QMessageBox.AcceptRole)
-        cancelbtn = dil.addButton('Отмена', QMessageBox.NoRole)
-        nosavebtn = dil.addButton('Не сохранять', QMessageBox.RejectRole)
-        dil.setEscapeButton(cancelbtn)
-        dil.show()
-        dil.exec()
-        c = dil.clickedButton()
-        if c == nosavebtn:
-            mw.show()
-            dil.hide()
-            self.hide()
-        elif c == savebtn:
-            self.savetest()
-            mw.show()
-            dil.hide()
-            self.hide()
-        else:
-            pass
-
-    def savetest(self):
-        global tables
-        if self.sender() == self.save_as or self.filename is None:
-            filename = QFileDialog.getSaveFileName(self, 'Сохранить тест', '', '*.json')[0]
-            self.filename = filename
-        else:
-            filename = self.filename
-
-        self.questions.setCurrentIndex(0)
-        timelim = self.questions.currentWidget().time_limit.time()
-        self.questions.setCurrentIndex(self.pageindex)
-        data = {'timer': timelim, 'name': self.testname, 'filename': self.filename, 'pages': []}
+    def finishtest(self):
+        total = 0
+        allq = self.questions.count() - 1
         for i in range(1, self.questions.count()):
             self.questions.setCurrentIndex(i)
-            w = self.questions.currentWidget()
-            data['pages'].append(w.extractcontent())
-        if filename != '':
-            with open(filename, 'w') as f:
-                json.dump(data, f)
-            print(data)
-        else:
-            error = QErrorMessage()
-            error.showMessage('Пустое название файла!')
+            wd = self.questions.currentWidget()
+            a1 = wd.returnanswer()
+            a2 = decode(self.data['pages'][i - 1]['answer'], self.codekey)
+            print(a1, a2)
+            if a1 == a2:
+                total += 1
 
-        if self.testname not in tables:
-            bd = sqlite3.connect('results.db')
-            cr = bd.cursor()
-            # TODO починить создание таблиц
-            cr.execute('''CREATE TABLE {}
-               (id INT PRIMARY KEY UNIQUE,
-                name TEXT,
-                date DATETIME,
-                completion INT)'''.format(self.filename))
-        self.refresh()
+        tempind = self.questions.count() - 1
+        while self.questions.count() > 1:
+            self.questions.setCurrentIndex(tempind)
+            wd = self.questions.currentWidget()
+            self.questions.removeWidget(wd)
+            tempind -= 1
+
+        self.questions.insertWidget(1, EndPage())
+        self.questions.setCurrentIndex(1)
+        self.toolbar_widget.hide()
+        endw = self.questions.currentWidget()
+        endw.result.setText(str(total) + ' вопросов из ' + str(allq))
+        endw.quit_btn.clicked.connect(self.__exit__)
+        self.testactive = False
 
 
 if __name__ == '__main__':
-    tables = list()
     app = QApplication(sys.argv)
     mw = MainWindow()
-    ed = EditorWindow()
     mw.show()
     sys.exit(app.exec_())

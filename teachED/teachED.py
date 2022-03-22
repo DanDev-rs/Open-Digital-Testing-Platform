@@ -1,13 +1,44 @@
 # import socket
-import schedule
-import time
+# import threading
+# import time
+import random
 import json
 import sqlite3
 
 import sys
+from PyQt5 import QtCore
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog, QErrorMessage, QMessageBox, \
-    QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QFileDialog, QMessageBox, QTableWidgetItem
+
+
+def deencode(word, codekey, decode):
+    letters = list(word.strip())
+    opers = list()
+    out = list()
+    for n in range(0, 11, 2):
+        opers.append((int(codekey[n]), int(codekey[n + 1])))
+    print(opers)
+    if decode:
+        for lt in letters:
+            ind = ord(lt)
+            for oper in opers:
+                op, num = oper
+                if op in {1, 3, 4, 6}:
+                    ind -= num
+                elif op in {2, 5, 7, 8}:
+                    ind += num
+            out.append(ind)
+    else:
+        for lt in letters:
+            ind = ord(lt)
+            for oper in opers:
+                op, num = oper
+                if op in {1, 3, 4, 6}:
+                    ind += num
+                elif op in {2, 5, 7, 8}:
+                    ind -= num
+            out.append(ind)
+    return ''.join(chr(g) for g in out)
 
 
 class NoFileName(Exception):
@@ -20,12 +51,12 @@ class UiSetup(object):
 
 
 class SingleTestPage(QWidget, UiSetup):
-    def __init__(self, setup=None):
+    def __init__(self, code=None, setup=None):
         super().__init__()
         uic.loadUi(sys.path[0] + '\\ui\\q_single.ui', self)
         if setup is not None:
             self.desc.setText(setup['desc'])
-            self.answ.setText(setup['answer'])
+            self.answ.setText(deencode(setup['answer'], code, True))
 
     def extractcontent(self):
         out = {'type': 'single', 'answer': self.answ.text(), 'desc': self.desc.toPlainText()}
@@ -33,7 +64,7 @@ class SingleTestPage(QWidget, UiSetup):
 
 
 class PickTestPage(QWidget, UiSetup):
-    def __init__(self, setup=None):
+    def __init__(self, code=None, setup=None):
         super().__init__()
         picks = []
         opts = []
@@ -61,23 +92,29 @@ class PickTestPage(QWidget, UiSetup):
 
         if setup is not None:
             self.desc.setText(setup['desc'])
-            for n in setup['picked']:
-                self.picks[n].setCheckState(True)
+            answer = list(deencode(setup['answer'], code, True))
             for i in range(0, 8):
                 self.opts[i].setText(setup['options'][i])
+                self.picks[i].setTristate(False)
+                if answer[i] == '1':
+                    self.picks[i].setCheckState(QtCore.Qt.Checked)
+                else:
+                    self.picks[i].setCheckState(QtCore.Qt.Unchecked)
 
     def extractcontent(self):
         out = {
             'type': 'pick',
             'desc': self.desc.toPlainText(),
             'options': [],
-            'picked': []
+            'answer': ''
         }
         for i in range(0, 8):
             p = self.picks[i]
             o = self.opts[i]
             if p.isChecked():
-                out['picked'].append(i)
+                out['answer'] += '1'
+            else:
+                out['answer'] += '0'
             if o.text() != '':
                 out['options'].append(o.text())
             else:
@@ -86,7 +123,6 @@ class PickTestPage(QWidget, UiSetup):
 
 # TODO: сделать подтверждение удаления
 # TODO: ученическая версия
-# TODO при открытии теста некоторые галочки меняются на tristate?
 # TODO: автообновление (опционально)
 # TODO: оценка результатов теста
 
@@ -99,28 +135,28 @@ class MainWindow(QMainWindow, UiSetup):
         self.bd = sqlite3.connect('results.db')
         for name in self.bd.cursor().execute("""SELECT name FROM sqlite_master WHERE type='table';""").fetchall():
             tables.append(name[0])
-        print(tables)
+        tables.sort()
         self.view_table.setHorizontalHeaderLabels(['Номер', 'Имя', 'Дата и время', 'Результат в %'])
         self.viewindex = 0
-        schedule.every(30).seconds.do(self.refresh)
 
         self.view_name.setText(tables[self.viewindex])
-        self.a_exit.triggered.connect(self.exit)
+        self.a_exit.triggered.connect(self.__exit__)
         self.a_toeditor.triggered.connect(self.loadeditor)
         self.f_enable.clicked.connect(self.refresh)
         self.v_right.clicked.connect(self.changetable)
         self.v_left.clicked.connect(self.changetable)
         self.t_refresh.clicked.connect(self.refresh)
-        self.refresh()
+        self.t_delete.clicked.connect(self.deletetable)
+        if len(tables) > 1:
+            self.viewindex = 1
+            self.refresh()
 
     def refresh(self):
         global tables
-
+        cmp = 1
         if self.comp_check.isChecked():
             if self.comp_type.currentIndex() == 0:
                 cmp = 0
-            else:
-                cmp = 1
             completion = self.comp_spin.value()
         else:
             completion = None
@@ -130,7 +166,7 @@ class MainWindow(QMainWindow, UiSetup):
         else:
             date = None
 
-        if tables:
+        if len(tables) > 1:
             self.view_name.setText(tables[self.viewindex])
             self.view_table.clear()
             self.view_table.setRowCount(0)
@@ -169,8 +205,6 @@ class MainWindow(QMainWindow, UiSetup):
                 for i, f in enumerate(passed):
                     for j, val in enumerate(f):
                         self.view_table.setItem(i, j, QTableWidgetItem(str(val)))
-        print(schedule.get_jobs())
-        print('refreshed')
 
     def loadmainwindow(self):
         self.loadeditorwindow(0)
@@ -183,19 +217,27 @@ class MainWindow(QMainWindow, UiSetup):
             if self.viewindex + 1 <= len(tables) - 1:
                 self.viewindex += 1
         else:
-            if self.viewindex > 0:
+            if self.viewindex > 1:
                 self.viewindex -= 1
         self.refresh()
 
     def deletetable(self):
-        pass
+        if len(tables) > 1:
+            self.bd.cursor().execute("""DROP TABLE {}""".format(tables[self.viewindex]))
+            tables.pop(self.viewindex)
+            if self.viewindex < len(tables) - 1:
+                self.viewindex += 1
+            else:
+                self.viewindex -= 1
+            if len(tables) == 1:
+                self.viewindex = 0
+            self.refresh()
 
     def loadeditor(self):
         ed.show()
         self.hide()
 
-    @staticmethod
-    def exit():
+    def __exit__(self):
         sys.exit()
 
 
@@ -207,6 +249,14 @@ class EditorWindow(QMainWindow, UiSetup):
         self.timer = 0
         self.testname = 'Новый тест'
         self.filename = None
+        self.codekey = None
+
+        tempind = self.questions.count() - 1
+        while self.questions.count() > 1:
+            self.questions.setCurrentIndex(tempind)
+            wd = self.questions.currentWidget()
+            self.questions.removeWidget(wd)
+            tempind -= 1
 
         self.exit_editor.triggered.connect(self.__exit__)
         self.create_single.triggered.connect(self.createpage)
@@ -219,12 +269,24 @@ class EditorWindow(QMainWindow, UiSetup):
         self.prev_page.clicked.connect(self.changepage)
         self.delete_page.clicked.connect(self.deletepage)
         self.test_name.editingFinished.connect(self.refresh)
-
         self.refresh()
 
     def newtest(self):
         path = QFileDialog.getExistingDirectory(self, 'Новый тест', '')
-        print(path)
+        if path != '':
+            tempind = self.questions.count() - 1
+            while self.questions.count() > 1:
+                self.questions.setCurrentIndex(tempind)
+                wd = self.questions.currentWidget()
+                self.questions.removeWidget(wd)
+                tempind -= 1
+            self.testname = 'Новый тест'
+            self.test_name.setText(self.testname)
+            self.pageindex = 0
+            self.timer = '0:10:00'
+            self.codekey = None
+            self.time_limit.setTime(QtCore.QTime.fromString(self.timer))
+            self.filename = path
 
     def opentest(self):
         tempind = self.questions.count() - 1
@@ -234,21 +296,24 @@ class EditorWindow(QMainWindow, UiSetup):
             self.questions.removeWidget(wd)
             tempind -= 1
         tempind = 0
-        path = QFileDialog.getOpenFileName(self, 'Выберите файл', '', '', )[0]
-        with open(path, 'r') as jj:
-            data = json.load(jj)
-        self.timer = data['timer']
-        self.testname = data['name']
-        self.filename = data['filename']
-        for pagedata in data['pages']:
-            tempind += 1
-            if pagedata['type'] == 'single':
-                self.questions.addWidget(SingleTestPage(pagedata))
-            else:
-                self.questions.addWidget(PickTestPage(pagedata))
-        self.test_name.setText(self.testname)
-        self.pageindex = 0
-        self.refresh()
+        path = QFileDialog.getOpenFileName(self, 'Выберите файл', '', '', '*.json')[0]
+        if path != '':
+            self.filename = '\\'.join(g for g in list(filter(lambda x: '.json' not in x, path.split('/'))))
+            with open(path, 'r') as jj:
+                data = json.load(jj)
+            self.timer = data['timer']
+            self.testname = data['name']
+            self.codekey = data['codekey']
+            for pagedata in data['pages']:
+                tempind += 1
+                if pagedata['type'] == 'single':
+                    self.questions.addWidget(SingleTestPage(self.codekey, pagedata))
+                else:
+                    self.questions.addWidget(PickTestPage(self.codekey, pagedata))
+            self.test_name.setText(self.testname)
+            self.time_limit.setTime(QtCore.QTime.fromString(self.timer))
+            self.pageindex = 0
+            self.refresh()
 
     def refresh(self):
         print(self.pageindex)
@@ -309,32 +374,50 @@ class EditorWindow(QMainWindow, UiSetup):
         if c == nosavebtn:
             mw.show()
             dil.hide()
-            self.hide()
+            self.close()
         elif c == savebtn:
             self.savetest()
             mw.show()
             dil.hide()
-            self.hide()
+            self.close()
         else:
             pass
 
     def savetest(self):
         global tables
-        directory = QFileDialog.getExistingDirectory()
-
-        tl = self.time_limit.time()
-        timelim = tl.hour() * 3600 + tl.minute() * 60 + tl.second()
-        print(timelim)
-        data = {'timer': timelim, 'name': self.testname, 'pages': []}
+        out_name = '_'.join(g for g in self.testname.split())
+        if self.filename is None or self.sender() == self.save_as:
+            directory = QFileDialog.getExistingDirectory()
+            self.filename = directory
+        else:
+            directory = self.filename
+        filename = directory + '\\' + out_name + '.json'
+        tl = self.time_limit.time().toString()
+        print(tl)
+        data = {'timer': tl, 'name': self.testname, 'pages': [], 'codekey': ''}
         for i in range(1, self.questions.count()):
             self.questions.setCurrentIndex(i)
             w = self.questions.currentWidget()
             data['pages'].append(w.extractcontent())
-        out_name = '_'.join(g for g in self.testname.split())
-        filename = directory + '\\' + out_name + '.json'
         try:
             if directory == '':
                 raise NoFileName
+            if self.codekey is None:
+                key = ''
+                for i in range(0, 12):
+                    key += str(random.randint(1, 8))
+                inp = 'abcdefghijklmnopqrstuvwxyz'
+                output = deencode(inp, key, False)
+                while deencode(output, key, True) != inp:
+                    key = ''
+                    for i in range(0, 12):
+                        key += str(random.randint(1, 8))
+                    inp = 'abcdefghijklmnopqrstuvwxyz'
+                    output = deencode(inp, key, False)
+                self.codekey = key
+            data['codekey'] = self.codekey
+            for page in data['pages']:
+                page['answer'] = deencode(page['answer'], self.codekey, False)
             with open(filename, 'w') as f:
                 json.dump(data, f)
             print(data)
@@ -349,14 +432,13 @@ class EditorWindow(QMainWindow, UiSetup):
         except NoFileName:
             pass
         except sqlite3.OperationalError:
-            error = QErrorMessage().qtHandler()
-            error.showMessage('Нет имени теста!', 'qWarning')
+            pass
         finally:
             self.refresh()
 
 
 if __name__ == '__main__':
-    tables = list()
+    tables = []
     app = QApplication(sys.argv)
     mw = MainWindow()
     ed = EditorWindow()

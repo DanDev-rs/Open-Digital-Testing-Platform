@@ -116,6 +116,9 @@
         <property name="text">
          <string>Удалить</string>
         </property>
+        <property name="shortcut">
+         <string>Ctrl+D</string>
+        </property>
        </widget>
       </item>
       <item>
@@ -185,15 +188,24 @@
    <property name="text">
     <string>Сохранить</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="save_as">
    <property name="text">
     <string>Сохранить как</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
+   </property>
   </action>
   <action name="exit_editor">
    <property name="text">
     <string>Выйти из редактора</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="testoptions">
@@ -205,10 +217,16 @@
    <property name="text">
     <string>Открыть тест</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="new_test">
    <property name="text">
     <string>Новый тест</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
    </property>
   </action>
  </widget>

@@ -78,21 +78,27 @@
         </item>
         <item>
          <widget class="QToolButton" name="t_delete">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../data/images.qrc">
-            <normaloff>:/logos/icons8-delete-30.png</normaloff>:/logos/icons8-delete-30.png</iconset>
-          </property>
-          <property name="iconSize">
+          <property name="minimumSize">
            <size>
             <width>32</width>
             <height>32</height>
            </size>
           </property>
-          <property name="autoRaise">
-           <bool>true</bool>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../data/icons8-delete-30.png</normaloff>../data/icons8-delete-30.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="autoRepeat">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -113,7 +119,7 @@
            </size>
           </property>
           <property name="autoRaise">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -132,7 +138,7 @@
            </size>
           </property>
           <property name="autoRaise">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="arrowType">
            <enum>Qt::LeftArrow</enum>
@@ -157,7 +163,7 @@
            <enum>Qt::ToolButtonIconOnly</enum>
           </property>
           <property name="autoRaise">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="arrowType">
            <enum>Qt::RightArrow</enum>
