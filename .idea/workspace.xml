@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="13c0ef83-68cb-4cfb-b84c-10359e67564e" name="Changes" comment="starting the student edition">
+    <list default="true" id="13c0ef83-68cb-4cfb-b84c-10359e67564e" name="Changes" comment="v0.1 done">
+      <change beforePath="$PROJECT_DIR$/.idea/OSET.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/OSET.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studED/mainmenu.ui" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/studED/studED.py" beforeDir="false" afterPath="$PROJECT_DIR$/studED/studED.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studED/ui/mainwindow.ui" beforeDir="false" afterPath="$PROJECT_DIR$/studED/ui/mainwindow.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/teachED/data/images.qrc" beforeDir="false" afterPath="$PROJECT_DIR$/teachED/data/images.qrc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/teachED/teachED.py" beforeDir="false" afterPath="$PROJECT_DIR$/teachED/teachED.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/teachED/ui/editor.ui" beforeDir="false" afterPath="$PROJECT_DIR$/teachED/ui/editor.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/teachED/ui/mainwindow.ui" beforeDir="false" afterPath="$PROJECT_DIR$/teachED/ui/mainwindow.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/teachED/ui/q_pick.ui" beforeDir="false" afterPath="$PROJECT_DIR$/teachED/ui/q_pick.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/teachED/ui/d_exitsave.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/teachED/ui/q_init.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,20 +30,24 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/studED/studED.py" root0="SKIP_INSPECTION" />
+  </component>
   <component name="ProjectId" id="24u6n3AiMMOsPD7PiRYyDqEfBs3" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
+    <option name="sortByType" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="configurable.group.project" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../../../Python" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.teachED">
+  <component name="RunManager" selected="Python.studED">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="OSET" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -154,8 +155,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.teachED" />
         <item itemvalue="Python.studED" />
+        <item itemvalue="Python.teachED" />
         <item itemvalue="Python.test" />
         <item itemvalue="Python.main" />
         <item itemvalue="Python.server" />
@@ -220,7 +221,14 @@
       <option name="project" value="LOCAL" />
       <updated>1647788069914</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="v0.1 done">
+      <created>1647961828896</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1647961828896</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -234,7 +242,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="dev" />
+                        <option value="HEAD" />
                       </list>
                     </value>
                   </entry>
@@ -256,109 +264,80 @@
     <MESSAGE value="commiting the alpha build" />
     <MESSAGE value="making the main window" />
     <MESSAGE value="starting the student edition" />
-    <option name="LAST_COMMIT_MESSAGE" value="starting the student edition" />
+    <MESSAGE value="v0.1 done" />
+    <option name="LAST_COMMIT_MESSAGE" value="v0.1 done" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
-          <line>19</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
-          <line>37</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
-          <line>38</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
-          <line>12</line>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
-          <line>30</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test.py</url>
-          <line>29</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/teachED/teachED.py</url>
-          <line>419</line>
+          <line>887</line>
           <option name="timeStamp" value="44" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/studED/studED.py</url>
-          <line>198</line>
+          <line>511</line>
           <option name="timeStamp" value="48" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/studED/studED.py</url>
-          <line>201</line>
+          <line>514</line>
           <option name="timeStamp" value="50" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/studED/studED.py</url>
-          <line>204</line>
+          <line>517</line>
           <option name="timeStamp" value="52" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/studED/studED.py</url>
-          <line>199</line>
+          <line>512</line>
           <option name="timeStamp" value="55" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/studED/studED.py</url>
-          <line>200</line>
+          <line>513</line>
           <option name="timeStamp" value="56" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/teachED/teachED.py</url>
-          <line>420</line>
+          <line>888</line>
           <option name="timeStamp" value="72" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/teachED/teachED.py</url>
-          <line>421</line>
+          <line>889</line>
           <option name="timeStamp" value="73" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/teachED/teachED.py</url>
-          <line>313</line>
+          <line>781</line>
           <option name="timeStamp" value="75" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/teachED/teachED.py</url>
-          <line>314</line>
+          <line>782</line>
           <option name="timeStamp" value="76" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/teachED/teachED.py</url>
-          <line>312</line>
+          <line>780</line>
           <option name="timeStamp" value="77" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/teachED/teachED.py</url>
-          <line>402</line>
+          <line>870</line>
           <option name="timeStamp" value="78" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/teachED/teachED.py</url>
-          <line>403</line>
+          <line>871</line>
           <option name="timeStamp" value="79" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/studED/studED.py</url>
-          <line>202</line>
+          <line>515</line>
           <option name="timeStamp" value="80" />
         </line-breakpoint>
       </breakpoints>
